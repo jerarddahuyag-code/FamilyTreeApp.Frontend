@@ -28,7 +28,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         <div className={styles.userSection}>
           <Avatar name={user?.email || 'User'} size="sm" />
-          <a href="/api/Auth/logout" className={styles.logoutBtn}>
+          <a href="/api/Auth/logout?returnUrl=/login" className={styles.logoutBtn}>
             <LogOut size={18} />
           </a>
         </div>

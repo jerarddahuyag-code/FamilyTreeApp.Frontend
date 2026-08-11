@@ -45,7 +45,7 @@ export function useAddTreeNode() {
         method: 'POST',
         body: JSON.stringify(command),
       });
-      return res;
+      return res.value;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['canvas', variables] });
