@@ -5,17 +5,21 @@ import { AddMemberModal } from '../Roster/AddMemberModal';
 import { Button } from '@/components/ui/Button/Button';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { useRosterMembers } from '../../api/roster-api';
+import { useCanvas } from '../../api/canvas-api';
 import styles from './WorkspaceSidebar.module.css';
 
 interface WorkspaceSidebarProps {
   treeId: string;
-  selectedNode?: TreeNodeDto | null;
+  selectedNodeId?: string | null;
 }
 
-export function WorkspaceSidebar({ treeId, selectedNode }: WorkspaceSidebarProps) {
+export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarProps) {
   const [activeTab, setActiveTab] = useState<'roster' | 'details'>('details');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { data: rosterData, isLoading } = useRosterMembers(treeId);
+  const { data: canvasData } = useCanvas(treeId);
+
+  const selectedNode = canvasData?.nodes.find(n => n.id === selectedNodeId);
 
   return (
     <div className={styles.sidebar}>

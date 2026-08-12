@@ -25,3 +25,16 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 *   **Explicit Layer Orchestration:** Frontend must orchestrate mutations across the Canvas and Roster layers independently. Adding a new biological member is independent of creating a new visual node in the canvas and requires two separate api calls. 
 *   **Canvas Editing Strategy:** Canvas coordinates are **not** persisted automatically on drag. Frontend holds local position state in Zustand. Explicit saves are required, with a 5-minute background auto-save fallback to prevent data loss.
 *   **API Contracts:** When implementing features that require knowledge of the backend schema, ALWAYS consult the `open-api-spec.json` file first. It is the absolute source of truth for all backend API contracts.
+
+## Canvas Flow Guidelines
+
+- **Node Interaction**: Clicking a node should open the *Node Details* tab in the right sidebar, displaying its members and allowing CRUD operations.
+- **Node CRUD**:
+  - *Create*: Use the "Add Node" button in the canvas toolbar. The node starts empty; members are added later.
+  - *Read*: Nodes are fetched via `useCanvas` and displayed in the flow.
+  - *Update*: Member membership changes are performed through the `useUpdateTreeNode` hook, which calls the domain‑level `TreeNode.UpdateMembers` method on the backend.
+  - *Delete*: Use the delete button in the *Node Details* panel; this triggers the `DELETE /api/trees/{treeId}/canvas/nodes/{nodeId}` endpoint.
+- **Member CRUD on Nodes**:
+  - *Add Member*: In the *Node Details* tab, select members from the roster and click "Add". This calls the `UpdateTreeNodeCommand` with the new member list.
+  - *Remove Member*: Deselect members and click "Remove"; the command updates the node accordingly.
+  - *Read*: Member details are shown using the `CanvasMemberDto` shape, respecting visibility and masking rules.

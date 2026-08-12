@@ -68,6 +68,7 @@ export interface UpdateCanvasCommand {
 export interface UpdateTreeNodeCommand {
   treeId: string;
   nodeId: string;
+  nodeType?: NodeType;
   familyMemberIds: string[];
 }
 
