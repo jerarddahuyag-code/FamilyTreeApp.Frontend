@@ -87,3 +87,35 @@ export function useDeleteMember() {
     },
   });
 }
+
+export function useClaimMember() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ treeId, memberId }: { treeId: string; memberId: string }) => {
+      const res = await apiClient<ApiResponse<void>>(`trees/${treeId}/members/${memberId}/claim`, {
+        method: 'PUT',
+      });
+      return res.value;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['roster', variables.treeId] });
+    },
+  });
+}
+
+export function useUnclaimMember() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ treeId, memberId }: { treeId: string; memberId: string }) => {
+      const res = await apiClient<ApiResponse<void>>(`trees/${treeId}/members/${memberId}/unclaim`, {
+        method: 'PUT',
+      });
+      return res.value;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['roster', variables.treeId] });
+    },
+  });
+}

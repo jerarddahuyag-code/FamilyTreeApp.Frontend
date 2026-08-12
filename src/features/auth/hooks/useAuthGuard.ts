@@ -16,15 +16,16 @@ export function useAuthGuard() {
 
     let mounted = true;
     
-    apiClient<any[]>('/Trees?IncludePrivate=false')
+    apiClient<any>('/Auth/me')
       .then((data) => {
         if (mounted) {
-          // Mocking the user profile since there is no explicit /Users/me endpoint
           setUser({
-            id: 'current-user',
-            email: 'user@familytree.com',
+            id: data.id,
+            email: data.email,
             globalPrivateFlag: false,
-            profileData: {},
+            profileData: {
+              name: data.name
+            },
           });
           setIsLoading(false);
         }

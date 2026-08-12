@@ -2,8 +2,12 @@ import { useState } from 'react';
 import { TreeNodeDto } from '../../api/types';
 import { DetailsPanel } from './DetailsPanel';
 import { AddMemberModal } from '../Roster/AddMemberModal';
+import { RosterListItem } from '../Roster/RosterListItem';
+import { ViewMemberModal } from '../Roster/ViewMemberModal';
+import { EditMemberModal } from '../Roster/EditMemberModal';
+import { ConfirmDeleteModal } from '../Roster/ConfirmDeleteModal';
+import { GetFamilyMembersResponseItem } from '../../api/types';
 import { Button } from '@/components/ui/Button/Button';
-import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { useRosterMembers } from '../../api/roster-api';
 import { useCanvas } from '../../api/canvas-api';
 import styles from './WorkspaceSidebar.module.css';
@@ -16,6 +20,9 @@ interface WorkspaceSidebarProps {
 export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarProps) {
   const [activeTab, setActiveTab] = useState<'roster' | 'details'>('details');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [viewingMember, setViewingMember] = useState<GetFamilyMembersResponseItem | null>(null);
+  const [editingMember, setEditingMember] = useState<GetFamilyMembersResponseItem | null>(null);
+  const [deletingMember, setDeletingMember] = useState<GetFamilyMembersResponseItem | null>(null);
   const { data: rosterData, isLoading } = useRosterMembers(treeId);
   const { data: canvasData } = useCanvas(treeId);
 
@@ -57,18 +64,14 @@ export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarPro
                 <div className={styles.emptyState}>Loading roster...</div>
               ) : rosterData?.items?.length ? (
                 rosterData.items.map(member => (
-                  <div key={member.familyMemberId} className={styles.rosterListItem}>
-                    <Avatar 
-                      src={member.profileInfo.avatarUrl || undefined} 
-                      name={`${member.profileInfo.firstName} ${member.profileInfo.lastName}`} 
-                      size="sm" 
-                    />
-                    <div className={styles.rosterListInfo}>
-                      <span className={styles.rosterListName}>
-                        {member.profileInfo.firstName} {member.profileInfo.lastName}
-                      </span>
-                    </div>
-                  </div>
+                  <RosterListItem
+                    key={member.familyMemberId}
+                    treeId={treeId}
+                    member={member}
+                    onView={setViewingMember}
+                    onEdit={setEditingMember}
+                    onDelete={setDeletingMember}
+                  />
                 ))
               ) : (
                 <div className={styles.emptyState}>No members found.</div>
@@ -82,6 +85,23 @@ export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarPro
         treeId={treeId} 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
+      />
+      <ViewMemberModal
+        member={viewingMember}
+        isOpen={!!viewingMember}
+        onClose={() => setViewingMember(null)}
+      />
+      <EditMemberModal
+        treeId={treeId}
+        member={editingMember}
+        isOpen={!!editingMember}
+        onClose={() => setEditingMember(null)}
+      />
+      <ConfirmDeleteModal
+        treeId={treeId}
+        member={deletingMember}
+        isOpen={!!deletingMember}
+        onClose={() => setDeletingMember(null)}
       />
     </div>
   );

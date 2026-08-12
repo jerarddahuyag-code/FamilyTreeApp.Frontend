@@ -16,13 +16,15 @@ export default function LoginPage() {
       return;
     }
     
-    apiClient<any[]>('/Trees?IncludePrivate=false')
+    apiClient<any>('/Auth/me')
       .then((data) => {
         setUser({
-          id: 'current-user',
-          email: 'user@familytree.com',
+          id: data.id,
+          email: data.email,
           globalPrivateFlag: false,
-          profileData: {},
+          profileData: {
+            name: data.name
+          },
         });
         router.push('/dashboard');
       })

@@ -246,23 +246,3 @@
   margin-top: var(--space-4);
 }
 
-.rosterListItem {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
-  background-color: var(--color-bg-primary);
-  border: 1px solid var(--color-border-default);
-}
-
-.rosterListInfo {
-  display: flex;
-  flex-direction: column;
-}
-
-.rosterListName {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
