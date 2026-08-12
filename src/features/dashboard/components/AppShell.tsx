@@ -6,7 +6,7 @@ import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { useAuthStore } from '@/stores/auth-store';
 import styles from './AppShell.module.css';
 import Link from 'next/link';
-import { LogOut } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuthGuard();
@@ -28,6 +28,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         <div className={styles.userSection}>
           <Avatar name={user?.email || 'User'} size="sm" />
+          <Link href="/settings/profile" className={styles.iconBtn}>
+            <Settings size={18} />
+          </Link>
           <a href="/api/Auth/logout?returnUrl=/login" className={styles.logoutBtn}>
             <LogOut size={18} />
           </a>

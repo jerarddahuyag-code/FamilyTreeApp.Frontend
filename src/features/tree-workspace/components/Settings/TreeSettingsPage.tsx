@@ -154,7 +154,7 @@ export function TreeSettingsPage({ treeId }: { treeId: string }) {
             ) : accessList?.map(access => (
               <div key={access.userId} className={styles.accessItem}>
                 <div className={styles.userInfo}>
-                  <Avatar name={access.email} imageUrl={access.avatarUrl || undefined} size="sm" />
+                  <Avatar name={access.email} src={access.avatarUrl || undefined} size="sm" />
                   <div>
                     <div className={styles.userName}>
                       {access.firstName ? `${access.firstName} ${access.lastName}` : access.email}

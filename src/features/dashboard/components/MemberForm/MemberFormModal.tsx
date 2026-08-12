@@ -14,7 +14,7 @@ const memberSchema = z.object({
   lastName: z.string().min(1, 'Last name is required'),
   birthDate: z.string().optional(),
   deathDate: z.string().optional(),
-  gender: z.enum(['Male', 'Female', 'Other']).optional(),
+  gender: z.enum(['Male', 'Female', 'NonBinary', 'PreferNotToSay']).optional(),
 });
 
 type MemberFormData = z.infer<typeof memberSchema>;
@@ -112,7 +112,8 @@ export const MemberFormModal: React.FC<MemberFormModalProps> = ({ treeId, isOpen
             <option value="">Select...</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option value="NonBinary">Non-Binary</option>
+            <option value="PreferNotToSay">Prefer Not to Say</option>
           </select>
         </div>
 
