@@ -11,7 +11,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import { useCanvas } from '../../api/canvas-api';
+import { useCanvas, useAddTreeNode } from '../../api/canvas-api';
 import { FamilyMemberNode } from './FamilyMemberNode';
 import { FamilyEdge } from './FamilyEdge';
 import { useAutoSave } from '../../hooks/useAutoSave';
@@ -35,6 +35,7 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { markUnsaved, saveLayout, isSaving, hasUnsavedChanges } = useAutoSave(treeId);
+  const { mutateAsync: addTreeNode, isPending: isAddingNode } = useAddTreeNode();
 
   useEffect(() => {
     if (data) {
@@ -71,6 +72,22 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
   return (
     <div className={styles.canvasContainer}>
       <div className={styles.toolbar}>
+        <button
+          onClick={() => {
+            addTreeNode({
+              treeId,
+              nodeType: 'Single',
+              x: 0,
+              y: 0,
+              familyMemberIds: []
+            });
+          }}
+          disabled={isAddingNode}
+          className={styles.saveBtn}
+          style={{ marginRight: '8px' }}
+        >
+          {isAddingNode ? 'Adding...' : 'Add Node'}
+        </button>
         <button 
           onClick={saveLayout} 
           disabled={!hasUnsavedChanges || isSaving}

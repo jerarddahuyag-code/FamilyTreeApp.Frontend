@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAddMember } from '../../api/roster-api';
-import { useAddTreeNode } from '../../api/canvas-api';
 import { Modal } from '@/components/ui/Modal/Modal';
 import { Button } from '@/components/ui/Button/Button';
 import { Gender, VisibilityStatus } from '../../api/types';
@@ -31,7 +30,6 @@ export function AddMemberModal({ treeId, isOpen, onClose }: AddMemberModalProps)
   });
 
   const { mutateAsync: addMember } = useAddMember();
-  const { mutateAsync: addTreeNode } = useAddTreeNode();
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: FormValues) => {
@@ -51,15 +49,6 @@ export function AddMemberModal({ treeId, isOpen, onClose }: AddMemberModalProps)
           bio: null
         },
         visibilityStatus: data.visibilityStatus
-      });
-
-      // 2. Visual (Canvas) layer API call
-      await addTreeNode({
-        treeId,
-        nodeType: 'Single',
-        x: 0,
-        y: 0,
-        familyMemberIds: [familyMemberId]
       });
 
       reset();

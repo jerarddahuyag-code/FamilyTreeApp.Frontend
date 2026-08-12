@@ -65,6 +65,12 @@ export interface UpdateCanvasCommand {
   updates: NodePositionUpdate[];
 }
 
+export interface UpdateTreeNodeCommand {
+  treeId: string;
+  nodeId: string;
+  familyMemberIds: string[];
+}
+
 export interface AddTreeNodeCommand {
   treeId: string;
   nodeType: NodeType;

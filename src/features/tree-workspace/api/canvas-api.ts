@@ -3,6 +3,7 @@ import { apiClient } from '@/lib/api-client';
 import {
   GetCanvasQueryResponse,
   UpdateCanvasCommand,
+  UpdateTreeNodeCommand,
   AddTreeNodeCommand,
   AddTreeEdgeCommand,
   ApiResponse,
@@ -43,6 +44,23 @@ export function useAddTreeNode() {
     mutationFn: async (command: AddTreeNodeCommand) => {
       const res = await apiClient<ApiResponse<{ nodeId: string }>>(`trees/${command.treeId}/canvas/nodes`, {
         method: 'POST',
+        body: JSON.stringify(command),
+      });
+      return res.value;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['canvas', variables.treeId] });
+    },
+  });
+}
+
+export function useUpdateTreeNode() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (command: UpdateTreeNodeCommand) => {
+      const res = await apiClient<ApiResponse<void>>(`trees/${command.treeId}/canvas/nodes/${command.nodeId}`, {
+        method: 'PUT',
         body: JSON.stringify(command),
       });
       return res.value;
