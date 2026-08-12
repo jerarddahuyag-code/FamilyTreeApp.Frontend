@@ -43,7 +43,7 @@ export function TreeSettingsPage({ treeId }: { treeId: string }) {
     queryFn: () => apiClient(`/trees/${treeId}/access`)
   });
 
-  const { data: searchResults, isLoading: isSearching } = useQuery<{ userList: UserSearchDto[] }>({
+  const { data: searchResults, isLoading: isSearching } = useQuery<{ value: { userList: UserSearchDto[] } }>({
     queryKey: ['users', 'search', debouncedSearchEmail],
     queryFn: () => apiClient(`/Users?IncludePrivate=false&SearchEmail=${encodeURIComponent(debouncedSearchEmail)}`),
     enabled: debouncedSearchEmail.length > 2
@@ -79,9 +79,9 @@ export function TreeSettingsPage({ treeId }: { treeId: string }) {
     addAccessMutation.mutate(userId);
   };
 
-  const { data: treeData } = useQuery({
+  const { data: treeData } = useQuery<{ value: { name: string } }>({
     queryKey: ['trees', treeId],
-    queryFn: () => apiClient<any>(`/Trees/${treeId}`)
+    queryFn: () => apiClient(`/Trees/${treeId}`)
   });
 
   return (
@@ -90,7 +90,7 @@ export function TreeSettingsPage({ treeId }: { treeId: string }) {
         <Link href={`/trees/${treeId}`} className={styles.backLink}>
           <ArrowLeft size={16} /> Back to Workspace
         </Link>
-        <h1 className={styles.title}>{treeData?.name ? `${treeData.name} Settings` : 'Tree Settings'}</h1>
+        <h1 className={styles.title}>{treeData?.value?.name ? `${treeData.value.name} Settings` : 'Tree Settings'}</h1>
       </header>
 
       <main className={styles.main}>
@@ -112,17 +112,17 @@ export function TreeSettingsPage({ treeId }: { treeId: string }) {
               <div className={styles.searchResults}>
                 {isSearching ? (
                   <div className={styles.searchItem}>Searching...</div>
-                ) : searchResults?.userList?.length ? (
-                  searchResults.userList
+                ) : searchResults?.value?.userList?.length ? (
+                  searchResults.value.userList
                     .filter(user => !accessList?.some(a => a.userId === user.userId))
                     .length > 0 ? (
-                    searchResults.userList
+                    searchResults.value.userList
                       .filter(user => !accessList?.some(a => a.userId === user.userId))
                       .map(user => (
                         <div key={user.userId} className={styles.searchItem}>
                           <div className={styles.userInfo}>
                             <Avatar name={user.email} size="sm" />
-                            <div>
+                            <div className={styles.userDetails}>
                               <div className={styles.userName}>{user.firstName} {user.lastName}</div>
                               <div className={styles.userEmail}>{user.email}</div>
                             </div>
@@ -155,7 +155,7 @@ export function TreeSettingsPage({ treeId }: { treeId: string }) {
               <div key={access.userId} className={styles.accessItem}>
                 <div className={styles.userInfo}>
                   <Avatar name={access.email} src={access.avatarUrl || undefined} size="sm" />
-                  <div>
+                  <div className={styles.userDetails}>
                     <div className={styles.userName}>
                       {access.firstName ? `${access.firstName} ${access.lastName}` : access.email}
                     </div>
