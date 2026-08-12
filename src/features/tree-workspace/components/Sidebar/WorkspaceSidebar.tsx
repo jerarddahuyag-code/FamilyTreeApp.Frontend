@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Settings } from 'lucide-react';
 import { TreeNodeDto } from '../../api/types';
 import { DetailsPanel } from './DetailsPanel';
 import { AddMemberModal } from '../Roster/AddMemberModal';
@@ -103,6 +104,13 @@ export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarPro
         isOpen={!!deletingMember}
         onClose={() => setDeletingMember(null)}
       />
+
+      <div className={styles.sidebarFooter}>
+        <a href={`/trees/${treeId}/settings`} className={styles.settingsLink}>
+          <span className={styles.settingsText}>Tree Settings</span>
+          <Settings size={20} className={styles.settingsIcon} />
+        </a>
+      </div>
     </div>
   );
 }

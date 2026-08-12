@@ -973,6 +973,14 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "SearchEmail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1040,6 +1048,29 @@
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Trees/{treeId}/access": {
+      "get": {
+        "tags": [
+          "Trees"
+        ],
+        "parameters": [
+          {
+            "name": "treeId",
             "in": "path",
             "required": true,
             "schema": {

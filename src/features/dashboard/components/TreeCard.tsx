@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Globe, Lock, Pencil, Trash2, ArrowRight } from 'lucide-react';
+import { Globe, Lock, Pencil, Trash2, ArrowRight, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge/Badge';
 import styles from './TreeCard.module.css';
 
@@ -44,6 +44,15 @@ export const TreeCard: React.FC<TreeCardProps> = ({ tree, onEdit, onDelete }) =>
         </div>
         {canManage && (
           <div className={styles.actions}>
+            <Link
+              href={`/trees/${tree.treeId}/settings`}
+              className={styles.actionButton}
+              title="Tree Settings"
+              aria-label="Tree Settings"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Users size={15} />
+            </Link>
             <button
               className={styles.actionButton}
               onClick={(e) => { e.stopPropagation(); onEdit(tree); }}

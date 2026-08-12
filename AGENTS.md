@@ -25,6 +25,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 *   **Explicit Layer Orchestration:** Frontend must orchestrate mutations across the Canvas and Roster layers independently. Adding a new biological member is independent of creating a new visual node in the canvas and requires two separate api calls. 
 *   **Canvas Editing Strategy:** Canvas coordinates are **not** persisted automatically on drag. Frontend holds local position state in Zustand. Explicit saves are required, with a 5-minute background auto-save fallback to prevent data loss.
 *   **API Contracts:** When implementing features that require knowledge of the backend schema, ALWAYS consult the `open-api-spec.json` file first. It is the absolute source of truth for all backend API contracts.
+*   **Design-First Planning:** Whenever you are tasked with creating or modifying a UI component, view, or layout, you MUST read the `frontend-design` skill (`c:\Users\kent\source\repos\FamilyTreeApp\.agents\skills\frontend-design\SKILL.md`) BEFORE creating your implementation plan. Aesthetic decisions, animations, and CSS structures must be explicitly defined in the plan before writing code.
 
 ## Canvas Flow Guidelines
 
