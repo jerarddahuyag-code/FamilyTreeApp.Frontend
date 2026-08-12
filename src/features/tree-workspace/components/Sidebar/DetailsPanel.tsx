@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/ToastProvider';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { X } from 'lucide-react';
+import { useTreeStore } from '@/stores/tree-store';
 import styles from './WorkspaceSidebar.module.css';
 
 interface DetailsPanelProps {
@@ -18,6 +19,8 @@ export function DetailsPanel({ treeId, selectedNode }: DetailsPanelProps) {
   const { mutateAsync: updateTreeNode, isPending: isUpdatingNode } = useUpdateTreeNode();
   const { mutateAsync: removeTreeNode, isPending: isRemovingNode } = useRemoveTreeNode();
   const toast = useToast();
+  const currentRole = useTreeStore(state => state.currentRole);
+  const canEdit = currentRole === 'Admin' || currentRole === 'Owner';
 
   const [currentNodeId, setCurrentNodeId] = useState(selectedNode.id);
   const [originalNodeType, setOriginalNodeType] = useState<NodeType>(selectedNode.type);
@@ -149,6 +152,7 @@ export function DetailsPanel({ treeId, selectedNode }: DetailsPanelProps) {
               className={styles.select} 
               value={pendingNodeType}
               onChange={(e) => handleChangeNodeType(e.target.value as NodeType)}
+              disabled={!canEdit}
             >
               <option value="Single">Single (1 Member)</option>
               <option value="Partner">Partner (2 Members)</option>
@@ -160,29 +164,31 @@ export function DetailsPanel({ treeId, selectedNode }: DetailsPanelProps) {
         <div className={styles.panelCard}>
           <h3 className={styles.cardTitle}>Members</h3>
           
-          <div className={styles.formGroup}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <select 
-                className={styles.select} 
-                value={selectedNewMember}
-                onChange={(e) => setSelectedNewMember(e.target.value)}
-                style={{ flex: 1 }}
-              >
-                <option value="">Select a member to add...</option>
-                {availableMembers.map(m => (
-                  <option key={m.familyMemberId} value={m.familyMemberId}>
-                    {m.profileInfo.firstName} {m.profileInfo.lastName}
-                  </option>
-                ))}
-              </select>
-              <Button 
-                onClick={handleAddMember} 
-                disabled={!selectedNewMember || pendingMembers.length >= getMaxMembers(pendingNodeType)}
-              >
-                Add
-              </Button>
+          {canEdit && (
+            <div className={styles.formGroup}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <select 
+                  className={styles.select} 
+                  value={selectedNewMember}
+                  onChange={(e) => setSelectedNewMember(e.target.value)}
+                  style={{ flex: 1 }}
+                >
+                  <option value="">Select a member to add...</option>
+                  {availableMembers.map(m => (
+                    <option key={m.familyMemberId} value={m.familyMemberId}>
+                      {m.profileInfo.firstName} {m.profileInfo.lastName}
+                    </option>
+                  ))}
+                </select>
+                <Button 
+                  onClick={handleAddMember} 
+                  disabled={!selectedNewMember || pendingMembers.length >= getMaxMembers(pendingNodeType)}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
 
           {pendingMembers.length === 0 ? (
             <div className={styles.emptyState} style={{ marginTop: '16px' }}>No members in this node</div>
@@ -208,29 +214,33 @@ export function DetailsPanel({ treeId, selectedNode }: DetailsPanelProps) {
                     </>
                   )}
                   
-                  <button 
-                    className={styles.removeBtn} 
-                    onClick={() => handleRemoveMember(member.id)}
-                    title="Remove member"
-                  >
-                    <X size={16} />
-                  </button>
+                  {canEdit && (
+                    <button 
+                      className={styles.removeBtn} 
+                      onClick={() => handleRemoveMember(member.id)}
+                      title="Remove member"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <div className={styles.dangerSection}>
-          <Button 
-            variant="danger" 
-            onClick={handleDeleteNode}
-            disabled={isRemovingNode}
-            style={{ width: '100%' }}
-          >
-            {isRemovingNode ? 'Deleting Node...' : 'Delete Node'}
-          </Button>
-        </div>
+        {canEdit && (
+          <div className={styles.dangerSection}>
+            <Button 
+              variant="danger" 
+              onClick={handleDeleteNode}
+              disabled={isRemovingNode}
+              style={{ width: '100%' }}
+            >
+              {isRemovingNode ? 'Deleting Node...' : 'Delete Node'}
+            </Button>
+          </div>
+        )}
       </div>
 
       {isDirty && (

@@ -11,6 +11,7 @@ import { GetFamilyMembersResponseItem } from '../../api/types';
 import { Button } from '@/components/ui/Button/Button';
 import { useRosterMembers } from '../../api/roster-api';
 import { useCanvas } from '../../api/canvas-api';
+import { useTreeStore } from '@/stores/tree-store';
 import styles from './WorkspaceSidebar.module.css';
 
 interface WorkspaceSidebarProps {
@@ -26,6 +27,8 @@ export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarPro
   const [deletingMember, setDeletingMember] = useState<GetFamilyMembersResponseItem | null>(null);
   const { data: rosterData, isLoading } = useRosterMembers(treeId);
   const { data: canvasData } = useCanvas(treeId);
+  const currentRole = useTreeStore(state => state.currentRole);
+  const canEditTree = currentRole === 'Admin' || currentRole === 'Owner';
 
   const selectedNode = canvasData?.nodes.find(n => n.id === selectedNodeId);
 
@@ -58,7 +61,9 @@ export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarPro
         {activeTab === 'roster' && (
           <div className={styles.rosterPanel}>
             <p className={styles.rosterDesc}>Manage the members of this family tree.</p>
-            <Button onClick={() => setIsAddModalOpen(true)}>Add New Member</Button>
+            {canEditTree && (
+              <Button onClick={() => setIsAddModalOpen(true)}>Add New Member</Button>
+            )}
             
             <div className={styles.rosterList}>
               {isLoading ? (
@@ -106,10 +111,12 @@ export function WorkspaceSidebar({ treeId, selectedNodeId }: WorkspaceSidebarPro
       />
 
       <div className={styles.sidebarFooter}>
-        <a href={`/trees/${treeId}/settings`} className={styles.settingsLink}>
-          <span className={styles.settingsText}>Tree Settings</span>
-          <Settings size={20} className={styles.settingsIcon} />
-        </a>
+        {currentRole === 'Owner' && (
+          <a href={`/trees/${treeId}/settings`} className={styles.settingsLink}>
+            <span className={styles.settingsText}>Tree Settings</span>
+            <Settings size={20} className={styles.settingsIcon} />
+          </a>
+        )}
       </div>
     </div>
   );

@@ -58,6 +58,8 @@ interface TreeState {
   removeEdge: (id: string) => void;
   addFamilyMember: (member: FamilyMemberDto) => void;
   updateFamilyMember: (id: string, updates: Partial<FamilyMemberDto>) => void;
+  currentRole: string | null;
+  setCurrentRole: (role: string | null) => void;
 }
 
 export const useTreeStore = create<TreeState>((set) => ({
@@ -65,7 +67,9 @@ export const useTreeStore = create<TreeState>((set) => ({
   edges: {},
   roster: {},
   isLoading: false,
+  currentRole: null,
   
+  setCurrentRole: (role) => set({ currentRole: role }),
   setCanvasData: (nodes, edges) => {
     const nodesMap: Record<string, TreeNodeDto> = {};
     nodes.forEach(n => { nodesMap[n.id] = n; });

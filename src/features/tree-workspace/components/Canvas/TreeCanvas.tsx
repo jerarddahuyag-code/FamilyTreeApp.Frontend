@@ -12,6 +12,7 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import { useCanvas, useAddTreeNode } from '../../api/canvas-api';
+import { useTreeStore } from '@/stores/tree-store';
 import { FamilyMemberNode } from './FamilyMemberNode';
 import { FamilyEdge } from './FamilyEdge';
 import { useAutoSave } from '../../hooks/useAutoSave';
@@ -36,6 +37,8 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { markUnsaved, saveLayout, isSaving, hasUnsavedChanges } = useAutoSave(treeId);
   const { mutateAsync: addTreeNode, isPending: isAddingNode } = useAddTreeNode();
+  const currentRole = useTreeStore(state => state.currentRole);
+  const canEditCanvas = currentRole === 'Admin' || currentRole === 'Owner';
 
   useEffect(() => {
     if (data) {
@@ -71,39 +74,44 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
 
   return (
     <div className={styles.canvasContainer}>
-      <div className={styles.toolbar}>
-        <button
-          onClick={() => {
-            addTreeNode({
-              treeId,
-              nodeType: 'Single',
-              x: 0,
-              y: 0,
-              familyMemberIds: []
-            });
-          }}
-          disabled={isAddingNode}
-          className={styles.saveBtn}
-          style={{ marginRight: '8px' }}
-        >
-          {isAddingNode ? 'Adding...' : 'Add Node'}
-        </button>
-        <button 
-          onClick={saveLayout} 
-          disabled={!hasUnsavedChanges || isSaving}
-          className={styles.saveBtn}
-        >
-          {isSaving ? 'Saving...' : 'Save Layout'}
-        </button>
-      </div>
+      {canEditCanvas && (
+        <div className={styles.toolbar}>
+          <button
+            onClick={() => {
+              addTreeNode({
+                treeId,
+                nodeType: 'Single',
+                x: 0,
+                y: 0,
+                familyMemberIds: []
+              });
+            }}
+            disabled={isAddingNode}
+            className={styles.saveBtn}
+            style={{ marginRight: '8px' }}
+          >
+            {isAddingNode ? 'Adding...' : 'Add Node'}
+          </button>
+          <button 
+            onClick={saveLayout} 
+            disabled={!hasUnsavedChanges || isSaving}
+            className={styles.saveBtn}
+          >
+            {isSaving ? 'Saving...' : 'Save Layout'}
+          </button>
+        </div>
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={handleNodesChange}
-        onEdgesChange={onEdgesChange}
+        onNodesChange={canEditCanvas ? handleNodesChange : undefined}
+        onEdgesChange={canEditCanvas ? onEdgesChange : undefined}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
+        nodesDraggable={canEditCanvas}
+        nodesConnectable={canEditCanvas}
+        elementsSelectable={true}
         fitView
       >
         <Background color="var(--color-bg-elevated)" gap={16} />

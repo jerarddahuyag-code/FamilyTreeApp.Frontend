@@ -4,6 +4,7 @@ import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { useAuthStore } from '@/stores/auth-store';
 import { GetFamilyMembersResponseItem } from '../../api/types';
 import { useClaimMember, useUnclaimMember } from '../../api/roster-api';
+import { useTreeStore } from '@/stores/tree-store';
 import styles from './RosterListItem.module.css';
 
 interface RosterListItemProps {
@@ -18,6 +19,8 @@ export function RosterListItem({ treeId, member, onEdit, onDelete, onView }: Ros
   const { user } = useAuthStore();
   const claimMutation = useClaimMember();
   const unclaimMutation = useUnclaimMember();
+  const currentRole = useTreeStore(state => state.currentRole);
+  const canEdit = currentRole === 'Admin' || currentRole === 'Owner';
 
   const isClaimedByMe = member.claimedByUserId === user?.id;
   const isClaimedByOther = member.claimedByUserId && member.claimedByUserId !== user?.id;
@@ -58,20 +61,24 @@ export function RosterListItem({ treeId, member, onEdit, onDelete, onView }: Ros
         >
           <Eye size={16} />
         </button>
-        <button 
-          className={`${styles.actionBtn} ${styles.editBtn}`} 
-          onClick={(e) => { e.stopPropagation(); onEdit(member); }}
-          title="Edit Member"
-        >
-          <Edit2 size={16} />
-        </button>
-        <button 
-          className={`${styles.actionBtn} ${styles.deleteBtn}`} 
-          onClick={(e) => { e.stopPropagation(); onDelete(member); }}
-          title="Delete Member"
-        >
-          <Trash2 size={16} />
-        </button>
+        {canEdit && (
+          <>
+            <button 
+              className={`${styles.actionBtn} ${styles.editBtn}`} 
+              onClick={(e) => { e.stopPropagation(); onEdit(member); }}
+              title="Edit Member"
+            >
+              <Edit2 size={16} />
+            </button>
+            <button 
+              className={`${styles.actionBtn} ${styles.deleteBtn}`} 
+              onClick={(e) => { e.stopPropagation(); onDelete(member); }}
+              title="Delete Member"
+            >
+              <Trash2 size={16} />
+            </button>
+          </>
+        )}
         
         <div className={styles.divider} />
 
