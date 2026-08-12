@@ -8,7 +8,7 @@ export type FamilyMemberNodeData = Node<TreeNodeDto, 'familyMember'>;
 export function FamilyMemberNode({ data, selected }: NodeProps<FamilyMemberNodeData>) {
   return (
     <div className={`${styles.nodeWrapper} ${selected ? styles.selected : ''}`}>
-      <Handle type="target" position={Position.Top} className={styles.handle} />
+      <Handle id="top" type="target" position={Position.Top} className={styles.handle} />
       <div className={styles.membersContainer}>
         {data.members.map((member) => (
           <div key={member.id} className={styles.member}>
@@ -25,7 +25,7 @@ export function FamilyMemberNode({ data, selected }: NodeProps<FamilyMemberNodeD
           </div>
         ))}
       </div>
-      <Handle type="source" position={Position.Bottom} className={styles.handle} />
+      <Handle id="bottom" type="source" position={Position.Bottom} className={styles.handle} />
     </div>
   );
 }

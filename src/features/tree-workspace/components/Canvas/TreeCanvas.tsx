@@ -7,11 +7,13 @@ import {
   useEdgesState,
   Node,
   Edge,
-  ConnectionMode
+  ConnectionMode,
+  addEdge,
+  Connection
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import { useCanvas, useAddTreeNode } from '../../api/canvas-api';
+import { useCanvas, useAddTreeNode, useAddTreeEdge, useRemoveTreeEdge } from '../../api/canvas-api';
 import { useTreeStore } from '@/stores/tree-store';
 import { FamilyMemberNode } from './FamilyMemberNode';
 import { FamilyEdge } from './FamilyEdge';
@@ -37,6 +39,8 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { markUnsaved, saveLayout, isSaving, hasUnsavedChanges } = useAutoSave(treeId);
   const { mutateAsync: addTreeNode, isPending: isAddingNode } = useAddTreeNode();
+  const { mutateAsync: addTreeEdge } = useAddTreeEdge();
+  const { mutateAsync: removeTreeEdge } = useRemoveTreeEdge();
   const currentRole = useTreeStore(state => state.currentRole);
   const canEditCanvas = currentRole === 'Admin' || currentRole === 'Owner';
 
@@ -67,6 +71,23 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
       markUnsaved();
     }
   }, [onNodesChange, markUnsaved]);
+
+  const handleConnect = useCallback((connection: Connection) => {
+    if (connection.source && connection.target) {
+      addTreeEdge({
+        treeId,
+        sourceNodeId: connection.source,
+        targetNodeId: connection.target,
+      });
+      setEdges((eds) => addEdge({ ...connection, type: 'familyEdge' }, eds));
+    }
+  }, [addTreeEdge, treeId, setEdges]);
+
+  const handleEdgesDelete = useCallback((deletedEdges: Edge[]) => {
+    deletedEdges.forEach((edge) => {
+      removeTreeEdge({ treeId, edgeId: edge.id });
+    });
+  }, [removeTreeEdge, treeId]);
 
   if (isLoading) {
     return <div className={styles.loading}>Loading canvas...</div>;
@@ -106,12 +127,17 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
         edges={edges}
         onNodesChange={canEditCanvas ? handleNodesChange : undefined}
         onEdgesChange={canEditCanvas ? onEdgesChange : undefined}
+        onEdgesDelete={canEditCanvas ? handleEdgesDelete : undefined}
+        onConnect={canEditCanvas ? handleConnect : undefined}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
         nodesDraggable={canEditCanvas}
         nodesConnectable={canEditCanvas}
         elementsSelectable={true}
+        deleteKeyCode={['Backspace', 'Delete']}
+        snapToGrid={true}
+        snapGrid={[16, 16]}
         fitView
       >
         <Background color="var(--color-bg-elevated)" gap={16} />
