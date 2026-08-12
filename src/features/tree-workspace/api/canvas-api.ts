@@ -48,7 +48,7 @@ export function useAddTreeNode() {
       return res.value;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['canvas', variables] });
+      queryClient.invalidateQueries({ queryKey: ['canvas', variables.treeId] });
     },
   });
 }

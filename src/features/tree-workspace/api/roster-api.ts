@@ -31,7 +31,7 @@ export function useAddMember() {
       return res.value;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['roster', variables] });
+      queryClient.invalidateQueries({ queryKey: ['roster', variables.treeId] });
     },
   });
 }
@@ -48,8 +48,8 @@ export function useUpdateMemberProfile() {
       return res;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['roster', variables] });
-      queryClient.invalidateQueries({ queryKey: ['canvas', variables] });
+      queryClient.invalidateQueries({ queryKey: ['roster', variables.treeId] });
+      queryClient.invalidateQueries({ queryKey: ['canvas', variables.treeId] });
     },
   });
 }

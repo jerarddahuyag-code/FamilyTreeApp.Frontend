@@ -111,8 +111,8 @@ export function AddMemberModal({ treeId, isOpen, onClose }: AddMemberModalProps)
 
           <div className={styles.actions}>
             <Button onClick={onClose} type="button">Cancel</Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Adding...' : 'Add Member'}
+            <Button type="submit" isLoading={isSubmitting}>
+              Add Member
             </Button>
           </div>
         </form>

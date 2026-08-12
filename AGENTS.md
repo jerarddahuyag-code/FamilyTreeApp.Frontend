@@ -22,6 +22,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 *   **Frontend Domains:** Organized via feature-driven structure (`src/features/`): Authentication (thin layer redirecting to backend Google OAuth), Dashboard (TreeTable for management), and Tree Workspace (React Flow canvas and collapsible sidebar with Roster/Details).
 
 **3. Critical Architectural Rules & Constraints**
-*   **Explicit Layer Orchestration:** Frontend must orchestrate mutations across the Canvas and Roster layers independently. Adding a new member requires two distinct API calls: create the biological member, then create the visual node.
+*   **Explicit Layer Orchestration:** Frontend must orchestrate mutations across the Canvas and Roster layers independently. Adding a new biological member is independent of creating a new visual node in the canvas and requires two separate api calls. 
 *   **Canvas Editing Strategy:** Canvas coordinates are **not** persisted automatically on drag. Frontend holds local position state in Zustand. Explicit saves are required, with a 5-minute background auto-save fallback to prevent data loss.
 *   **API Contracts:** When implementing features that require knowledge of the backend schema, ALWAYS consult the `open-api-spec.json` file first. It is the absolute source of truth for all backend API contracts.

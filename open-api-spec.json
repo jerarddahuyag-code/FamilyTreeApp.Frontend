@@ -38,6 +38,27 @@
         }
       }
     },
+    "/api/Auth/logout": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/trees/{treeId}/canvas": {
       "get": {
         "tags": [
@@ -1172,8 +1193,7 @@
       "CreateTreeCommand": {
         "required": [
           "isPublic",
-          "name",
-          "ownerId"
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -1470,6 +1490,10 @@
           },
           "description": {
             "type": "string",
+            "nullable": true
+          },
+          "isPublic": {
+            "type": "boolean",
             "nullable": true
           }
         },
