@@ -31,21 +31,19 @@ function WorkspaceContent({ treeId }: { treeId: string }) {
     return () => setCurrentRole(null);
   }, [setCurrentRole]);
 
-  useOnSelectionChange({
-    onChange: ({ nodes }) => {
-      const selected = nodes.filter(n => n.selected);
-      if (selected.length === 1) {
-        setSelectedNodeId(selected[0].id);
-      } else {
-        setSelectedNodeId(null);
-      }
-    },
-  });
+  const handleSelectionChange = React.useCallback(({ nodes }: { nodes: any[] }) => {
+    const selected = nodes.filter(n => n.selected);
+    if (selected.length === 1) {
+      setSelectedNodeId(selected[0].id);
+    } else {
+      setSelectedNodeId(null);
+    }
+  }, []);
 
   return (
     <div className={styles.workspaceContainer}>
       <div className={styles.canvasArea}>
-        <TreeCanvas treeId={treeId} />
+        <TreeCanvas treeId={treeId} onSelectionChange={handleSelectionChange} />
       </div>
       <WorkspaceSidebar treeId={treeId} selectedNodeId={selectedNodeId} />
     </div>

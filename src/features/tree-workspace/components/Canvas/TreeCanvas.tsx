@@ -31,9 +31,10 @@ const edgeTypes = {
 
 interface TreeCanvasProps {
   treeId: string;
+  onSelectionChange?: (params: { nodes: Node[]; edges: Edge[] }) => void;
 }
 
-export function TreeCanvas({ treeId }: TreeCanvasProps) {
+export function TreeCanvas({ treeId, onSelectionChange }: TreeCanvasProps) {
   const { data, isLoading } = useCanvas(treeId);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -125,17 +126,18 @@ export function TreeCanvas({ treeId }: TreeCanvasProps) {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={canEditCanvas ? handleNodesChange : undefined}
-        onEdgesChange={canEditCanvas ? onEdgesChange : undefined}
+        onNodesChange={handleNodesChange}
+        onEdgesChange={onEdgesChange}
         onEdgesDelete={canEditCanvas ? handleEdgesDelete : undefined}
         onConnect={canEditCanvas ? handleConnect : undefined}
+        onSelectionChange={onSelectionChange}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
         nodesDraggable={canEditCanvas}
         nodesConnectable={canEditCanvas}
         elementsSelectable={true}
-        deleteKeyCode={['Backspace', 'Delete']}
+        deleteKeyCode={canEditCanvas ? ['Backspace', 'Delete'] : null}
         snapToGrid={true}
         snapGrid={[16, 16]}
         fitView
